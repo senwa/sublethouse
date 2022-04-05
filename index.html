@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+	<html lang="zh-CN">
+	<head>
+	<meta charset="utf-8" />
+	<meta NAME="keywords" CONTENT="转租,租房,无中介,个人">
+	<meta NAME="description" CONTENT="乐转租专为方便个人转租而生">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	
+	<title>转租网-房屋转租|转租信息发布|转租信息搜索</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript">
+	// borwserRedirect
+	(function browserRedirect() {
+	var sUserAgent = navigator.userAgent.toLowerCase();
+	var bIsIpad = sUserAgent.match(/ipad/i) == 'ipad';
+	var bIsIphone = sUserAgent.match(/iphone os/i) == 'iphone os';
+	var bIsMidp = sUserAgent.match(/midp/i) == 'midp';
+	var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == 'rv:1.2.3.4';
+	var bIsUc = sUserAgent.match(/ucweb/i) == 'web';
+	var bIsCE = sUserAgent.match(/windows ce/i) == 'windows ce';
+	var bIsWM = sUserAgent.match(/windows mobile/i) == 'windows mobile';
+	var bIsAndroid = sUserAgent.match(/android/i) == 'android';
+	
+	if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM || bIsAndroid) {
+		window.location.href = '/mobile/index.html';
+	}
+	})();
+	</script>
+ 	<script src="https://api.map.baidu.com/api?v=2.0&type=webgl&ak=j0MkDuBnqH1XTrEO9DBLQAkzv2DGNfjM&services=&t=20220328142320"></script>
+
+	</head>
+
+	<body>
+		<img class='logo' src="https://static.mytime.net.cn/sublethouse/logo.png">
+		<div class="ml-nav">
+			<div class='mapserarch'>
+				<div id="r-result">请输入:<input type="text" id="suggestId" size="20" value="" style="width:250px;" /></div>
+				<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display: none;"></div>
+			</div>
+			<div class='loginOrRegisterBtn'>登陆/注册</div>
+		</div>
+	
+		<div id="mapcontainer"></div>
+
+		<div class="copyright">
+			乐转租 版权所有&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="http://www.beian.miit.gov.cn" target=_blank>京ICP备18006197号-1</a> <img src='https://static.mytime.net.cn/sublethouse/footer-8.png'/>
+		</div>		
+	</body>	
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+	var map = new BMapGL.Map('mapcontainer'); // 创建Map实例
+	map.centerAndZoom(new BMapGL.Point(116.404, 39.915), 12); // 初始化地图,设置中心点坐标和地图级别
+	map.enableScrollWheelZoom(true); // 开启鼠标滚轮缩放
+
+	function G(id) {
+		return document.getElementById(id);
+	}
+
+	var ac = new BMapGL.Autocomplete(    //建立一个自动完成的对象
+		{"input" : "suggestId",
+		"location" : map
+	});
+
+	ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+		console.log(e)
+		var str = "";
+		var _value = e.fromitem.value;
+		var value = "";
+		if (e.fromitem.index > -1) {
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+		
+		value = "";
+		if (e.toitem.index > -1) {
+			_value = e.toitem.value;
+			value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		}    
+		str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+		G("searchResultPanel").innerHTML = str;
+	});
+
+	var myValue;
+	ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+		var _value = e.item.value;
+		myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+		G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+		
+		setPlace();
+	});
+
+	function setPlace(){
+		map.clearOverlays();    //清除地图上所有覆盖物
+		function myFun(){
+			var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+			map.centerAndZoom(pp, 18);
+			map.addOverlay(new BMapGL.Marker(pp));    //添加标注
+		}
+		var local = new BMapGL.LocalSearch(map, { //智能搜索
+		  onSearchComplete: myFun
+		});
+		local.search(myValue);
+	}
+</script>
