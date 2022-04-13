@@ -39,7 +39,7 @@
 				<div id="r-result">请输入:<input type="text" id="suggestId" size="20" value="" style="width:250px;" /></div>
 				<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display: none;"></div>
 			</div>
-			<div class='loginOrRegisterBtn'>登陆/注册</div>
+			<div class='loginOrRegisterBtn' onclick='tologin()'>登陆/注册</div>
 		</div>
 	
 		<div id="mapcontainer"></div>
@@ -103,5 +103,10 @@
 		  onSearchComplete: myFun
 		});
 		local.search(myValue);
+	}
+
+
+	function tologin(){
+		window.location.href='login.html';
 	}
 </script>
